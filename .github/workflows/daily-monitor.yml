@@ -1,0 +1,36 @@
+</> YAML
+
+
+name: IQSIGHT Website Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run website monitor
+        run: python monitor.py
+
+      - name: Save monitoring results
+        run: |
+          git config user.name "IQSIGHT Monitor"
+          git config user.email "actions@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet || git commit -m "Update website monitoring results"
+          git push
