@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IQSIGHT Website Monitor</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:1100px;margin:35px auto;padding:0 20px;background:#f5f7fa;color:#202938}
+h1{margin-bottom:6px} .muted{color:#667085}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:25px 0}
+.card,article{background:white;border:1px solid #e1e5eb;border-radius:10px;padding:18px}
+.number{font-size:30px;font-weight:bold;margin-top:8px}
+article{margin:12px 0;overflow-wrap:anywhere}
+a{color:#1459a6} .tag{font-size:12px;background:#e8eef8;padding:4px 8px;border-radius:5px}
+button{padding:9px 14px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>IQSIGHT Website Monitor</h1>
+<p class="muted">Tägliche Überwachung der öffentlichen IQSIGHT-Website</p>
+<button onclick="loadData()">Daten aktualisieren</button>
+<p id="updated" class="muted">Lade Daten …</p>
+
+<div class="cards">
+  <div class="card">Geprüfte Seiten<div class="number" id="scanned">–</div></div>
+  <div class="card">Neue Seiten<div class="number" id="new">–</div></div>
+  <div class="card">Geänderte Seiten<div class="number" id="changed">–</div></div>
+</div>
+
+<h2>Erkannte Seiten und Änderungen</h2>
+<p class="muted">Beim ersten Lauf werden neue Seiten als Ausgangsbestand erfasst.</p>
+<div id="results">Daten werden geladen …</div>
+
+<script>
+async function loadData(){
+ const results=document.getElementById("results");
+ results.textContent="Lade Daten …";
+ try{
+  const response=await fetch("./data.json?t="+Date.now());
+  if(!response.ok) throw new Error("data.json nicht gefunden");
+  const data=await response.json();
+  const changes=Array.isArray(data.changes)?data.changes:[];
+  document.getElementById("scanned").textContent=data.pages_scanned??"–";
+  document.getElementById("new").textContent=changes.filter(x=>x.status==="new").length;
+  document.getElementById("changed").textContent=changes.filter(x=>x.status==="changed").length;
+  document.getElementById("updated").textContent="Letzte Prüfung: "+(data.last_checked||"unbekannt");
+  results.replaceChildren();
+  if(!changes.length){
+   results.textContent="Keine Einträge vorhanden.";
+   return;
+  }
+  changes.slice().reverse().forEach(item=>{
+   const article=document.createElement("article");
+   const title=document.createElement("h3");
+   const link=document.createElement("a");
+   link.href=item.url||"#";
+   link.textContent=item.title||item.url||"Unbekannte Seite";
+   link.target="_blank";
+   link.rel="noopener noreferrer";
+   title.append(link);
+   const tag=document.createElement("span");
+   tag.className="tag";
+   tag.textContent=item.status||"Seite";
+   const summary=document.createElement("p");
+   summary.textContent=item.summary||"Keine Zusammenfassung verfügbar.";
+   const language=document.createElement("p");
+   language.className="muted";
+   language.textContent="Sprache: "+(item.language||"unbekannt");
+   article.append(title,tag,summary,language);
+   results.append(article);
+  });
+ }catch(error){
+  results.textContent="Daten konnten nicht geladen werden: "+error.message+
+   ". Prüfe, ob data.json im Repository vorhanden und veröffentlicht ist.";
+ }
+}
+loadData();
+</script>
+</body>
+</html>
