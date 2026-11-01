@@ -12,7 +12,7 @@ from html.parser import HTMLParser
 
 BASE_URL = "https://www.iqsight.com/"
 DOMAIN = "www.iqsight.com"
-MAX_PAGES = 3000
+MAX_PAGES = 5000
 DATA_FILE = "data.json"
 TIMEOUT = 20
 
