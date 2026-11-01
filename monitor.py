@@ -187,6 +187,11 @@ def main():
     now = datetime.now(timezone.utc).isoformat()
     current = crawl()
 
+    if not current:
+        raise RuntimeError(
+            "Keine Seiten erfasst. Der bisherige Datenbestand bleibt erhalten."
+        )
+
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as file:
             previous_data = json.load(file)
