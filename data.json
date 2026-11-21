@@ -1,5 +1,5 @@
 {
-  "last_checked": "2026-11-20T06:21:16.275212+00:00",
+  "last_checked": "2026-11-21T06:12:06.193450+00:00",
   "pages_scanned": 5000,
   "changes": [],
   "history": [
@@ -24528,6 +24528,15 @@
     },
     {
       "checked_at": "2026-11-20T06:21:16.275212+00:00",
+      "pages_scanned": 5000,
+      "changes_found": 0,
+      "crawl_complete": false,
+      "limit_reached": true,
+      "failed_fetches": 0,
+      "changes": []
+    },
+    {
+      "checked_at": "2026-11-21T06:12:06.193450+00:00",
       "pages_scanned": 5000,
       "changes_found": 0,
       "crawl_complete": false,
